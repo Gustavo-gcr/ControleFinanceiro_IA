@@ -123,16 +123,26 @@ if arquivo is not None:
 
       
         st.subheader("🔮 Projeção de Saldo Futuro (6 meses)")
+        # Calcula média e saldo atual
         media_invest = investimento_df["Investimento"].mean()
         saldo_atual = investimento_df["Saldo Total"].iloc[-1]
-        projecao = [saldo_atual + media_invest * i for i in range(1, 7)]
+
+        # Cria projeção com valores arredondados
+        projecao = [round(saldo_atual + media_invest * i, 2) for i in range(1, 7)]
         projecao_df = pd.DataFrame({
             "Mês": [f"+{i}m" for i in range(1, 7)],
             "Saldo Projetado": projecao
         })
-        fig_proj = px.line(projecao_df, x="Mês", y="Saldo Projetado", markers=True, text="Saldo Projetado")
+
+        # Formata os textos do gráfico
+        projecao_df["Texto"] = projecao_df["Saldo Projetado"].apply(lambda x: f"{x:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+
+        # Exibe gráfico com texto formatado
+        fig_proj = px.line(projecao_df, x="Mês", y="Saldo Projetado", markers=True, text="Texto")
         fig_proj.update_traces(textposition="top center")
+
         st.plotly_chart(fig_proj, use_container_width=True)
+
     # --- FEEDBACK INTELIGENTE ---
     
 
