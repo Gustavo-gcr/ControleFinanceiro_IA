@@ -80,9 +80,7 @@ if arquivo is not None:
         fig_saldo.update_traces(textposition="top center")
         st.plotly_chart(fig_saldo, use_container_width=True)
 
-        st.subheader("📊 Investimento vs Saldo")
-        fig_area = px.area(investimento_df, x="Mês", y=["Investimento", "Saldo Total"])
-        st.plotly_chart(fig_area, use_container_width=True)
+        
 
         st.subheader("📊 Gastos vs Investimentos")
         comparativo = pd.DataFrame({
@@ -90,27 +88,40 @@ if arquivo is not None:
             "Gastos": saida_df["Total Gastos"].values,
             "Investimentos": investimento_df["Investimento"].values
         })
-        fig_bar = px.bar(comparativo, x="Mês", y=["Gastos", "Investimentos"], barmode="group", text_auto=True)
-        fig_bar.update_traces(textposition="outside")
+
+        fig_bar = go.Figure()
+
+        fig_bar.add_trace(go.Bar(
+            x=comparativo["Mês"],
+            y=comparativo["Gastos"],
+            name="Gastos",
+            text=comparativo["Gastos"].apply(lambda x: f"R${x:,.2f}"),
+            textposition="outside",
+            marker_color="indianred"
+        ))
+
+        fig_bar.add_trace(go.Bar(
+            x=comparativo["Mês"],
+            y=comparativo["Investimentos"],
+            name="Investimentos",
+            text=comparativo["Investimentos"].apply(lambda x: f"R${x:,.2f}"),
+            textposition="outside",
+            marker_color="seagreen"
+        ))
+
+        fig_bar.update_layout(
+            barmode="group",
+            title="Comparativo: Gastos x Investimentos por Mês",
+            xaxis_title="Mês",
+            yaxis_title="Valor (R$)",
+            legend_title="Categoria",
+            uniformtext_minsize=8,
+            uniformtext_mode="hide"
+        )
+
         st.plotly_chart(fig_bar, use_container_width=True)
 
-        st.subheader("📈 % Gasto e Investimento sobre o Saldo")
-        comparativo["% Gasto"] = comparativo["Gastos"] / investimento_df["Saldo Total"].values * 100
-        comparativo["% Investimento"] = comparativo["Investimentos"] / investimento_df["Saldo Total"].values * 100
-
-        fig_pct = go.Figure()
-        fig_pct.add_trace(go.Scatter(x=comparativo["Mês"], y=comparativo["% Gasto"], mode='lines+markers+text',
-                                     name='% Gasto',
-                                     text=[f'{v:.1f}%' for v in comparativo["% Gasto"]],
-                                     textposition='top center'))
-        fig_pct.add_trace(go.Scatter(x=comparativo["Mês"], y=comparativo["% Investimento"], mode='lines+markers+text',
-                                     name='% Investimento',
-                                     text=[f'{v:.1f}%' for v in comparativo["% Investimento"]],
-                                     textposition='bottom center'))
-        fig_pct.update_layout(title="Percentual de Gasto e Investimento sobre o Saldo",
-                              yaxis_title='Porcentagem (%)', xaxis_title='Mês')
-        st.plotly_chart(fig_pct, use_container_width=True)
-
+      
         st.subheader("🔮 Projeção de Saldo Futuro (6 meses)")
         media_invest = investimento_df["Investimento"].mean()
         saldo_atual = investimento_df["Saldo Total"].iloc[-1]
