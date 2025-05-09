@@ -24,7 +24,7 @@ if arquivo is not None:
         saida_df = saida_df.tail(1)
         investimento_df = investimento_df.tail(1)
 
-    tabs = st.tabs(["💰 Entradas", "💸 Saídas", "📈 Investimentos"])
+    tabs = st.tabs(["💰 Entradas", "💸 Saídas", "📈 Investimentos","🔍 Feedback Inteligente"])
 
     # --- ENTRADAS ---
     with tabs[0]:
@@ -133,3 +133,64 @@ if arquivo is not None:
         fig_proj = px.line(projecao_df, x="Mês", y="Saldo Projetado", markers=True, text="Saldo Projetado")
         fig_proj.update_traces(textposition="top center")
         st.plotly_chart(fig_proj, use_container_width=True)
+    # --- FEEDBACK INTELIGENTE ---
+    
+
+
+    with tabs[3]:
+        st.header("🔍 Análise e Recomendações Personalizadas")
+
+        if len(saida_df) >= 3 and len(investimento_df) >= 3:
+            categorias_gastos = saida_df.drop(columns=["Mês", "Total Gastos"])
+            media_3m = categorias_gastos.tail(3).mean()
+            ultimo_mes = categorias_gastos.tail(1).iloc[0]
+
+            st.subheader("📌 Gastos em Foco")
+
+            feedback_exibido = False
+            for categoria in categorias_gastos.columns:
+                gasto_mes = ultimo_mes[categoria]
+                media_categoria = media_3m[categoria]
+
+                if gasto_mes > media_categoria * 1.15:
+                    excesso = gasto_mes - media_categoria
+                    economia_potencial = excesso * 0.25
+                    st.markdown(f"""
+                    🔴 **{categoria}** teve um gasto acima da média em **{(gasto_mes - media_categoria) / media_categoria:.0%}** comparado aos últimos 3 meses.  
+                    👉 Considere reduzir em **R${economia_potencial:,.2f}**, podendo investir esse valor.
+                    """)
+                    feedback_exibido = True
+
+            if not feedback_exibido:
+                st.success("✅ Parabéns! Os gastos deste mês estão dentro da média. Continue assim! 💪")
+
+            st.divider()
+
+            st.subheader("🎯 Meta de Economia")
+            media_total = saida_df["Total Gastos"].tail(3).mean()
+            meta_economia = media_total * 0.1
+
+            if saida_df["Total Gastos"].iloc[-1] > media_total * 1.1:
+                st.markdown(f"""
+                📊 Sua média de gastos mensais foi de **R${media_total:,.2f}**.  
+                💡 Recomendamos uma meta de economia de **10%**, equivalente a **R${meta_economia:,.2f}** no próximo mês.
+                """)
+            else:
+                st.info("👍 Seus gastos totais estão sob controle. Mantenha o ritmo!")
+
+            st.divider()
+
+            st.subheader("📈 Reforço nos Investimentos")
+            media_invest = investimento_df["Investimento"].tail(3).mean()
+            invest_mes_atual = investimento_df["Investimento"].iloc[-1]
+
+            if invest_mes_atual < media_invest * 0.9:
+                reforco = media_invest * 0.2
+                st.markdown(f"""
+                📉 Neste mês, os investimentos ficaram abaixo da média (**R${invest_mes_atual:,.2f}** vs **R${media_invest:,.2f}**).  
+                💡 Considere aumentar em **R${reforco:,.2f}** para manter o ritmo de crescimento.
+                """)
+            else:
+                st.success("📈 Ótimo trabalho! Seus investimentos estão consistentes ou acima da média.")
+        else:
+            st.warning("⚠️ É necessário pelo menos 3 meses de dados para gerar análises inteligentes.")
