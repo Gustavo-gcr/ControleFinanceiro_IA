@@ -2,85 +2,116 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
 
-# Configurações de estilo
+# Estilo
 sns.set(style="whitegrid")
 
-# Carregando o Excel
+# Upload
+st.set_page_config(page_title="Dashboard Financeiro", layout="wide")
+st.title("📊 Dashboard Financeiro Pessoal")
 arquivo = st.file_uploader("📂 Envie seu arquivo Excel com as abas: entrada, saida, investimento", type=["xlsx"])
+
 if arquivo is not None:
     entrada_df = pd.read_excel(arquivo, sheet_name="entrada")
     saida_df = pd.read_excel(arquivo, sheet_name="saida")
     investimento_df = pd.read_excel(arquivo, sheet_name="investimento")
 
-    # Layout de abas
-    st.title("Dashboard Financeiro Pessoal")
-    tabs = st.tabs(["Entradas", "Saídas", "Investimentos"])
+    opcao = st.radio("🔎 Visualizar:", ["Histórico completo", "Mês atual"])
+    if opcao == "Mês atual":
+        entrada_df = entrada_df.tail(1)
+        saida_df = saida_df.tail(1)
+        investimento_df = investimento_df.tail(1)
 
-    # --- ABA ENTRADA ---
+    tabs = st.tabs(["💰 Entradas", "💸 Saídas", "📈 Investimentos"])
+
+    # --- ENTRADAS ---
     with tabs[0]:
-        st.header("Análise de Entradas")
-
+        st.header("💰 Análise de Entradas")
         entrada_df["Total Entradas"] = entrada_df["Salário"] + entrada_df["Outras Entradas"]
 
-        # Linha de entradas
-        st.subheader("Total de Entradas por Mês")
-        st.line_chart(entrada_df.set_index("Mês")["Total Entradas"])
+        st.subheader("📆 Total de Entradas por Mês")
+        fig_entrada = px.line(entrada_df, x="Mês", y="Total Entradas", markers=True, text="Total Entradas")
+        fig_entrada.update_traces(textposition="top center")
+        st.plotly_chart(fig_entrada, use_container_width=True)
 
-        # Pizza de proporção
-        st.subheader("Proporção entre Salário e Outras Entradas")
+        st.subheader("📊 Proporção entre Salário e Outras Entradas")
         media_entradas = entrada_df[["Salário", "Outras Entradas"]].mean()
         fig1, ax1 = plt.subplots()
         ax1.pie(media_entradas, labels=media_entradas.index, autopct='%1.1f%%', startangle=90)
+        ax1.axis('equal')
         st.pyplot(fig1)
 
-        # Barras comparativas
-        st.subheader("Comparativo por Categoria")
-        st.bar_chart(entrada_df.set_index("Mês")[["Salário", "Outras Entradas"]])
+        st.subheader("📋 Comparativo por Categoria")
+        fig_cat = px.bar(entrada_df, x="Mês", y=["Salário", "Outras Entradas"], barmode="group", text_auto=True)
+        fig_cat.update_traces(textposition="outside")
+        st.plotly_chart(fig_cat, use_container_width=True)
 
-    # --- ABA SAIDA ---
+    # --- SAÍDAS ---
     with tabs[1]:
-        st.header("Análise de Saídas")
-
+        st.header("💸 Análise de Saídas")
         saida_df["Total Gastos"] = saida_df.drop(columns="Mês").sum(axis=1)
-        
-        # Linha de gastos
-        st.subheader("Gastos Totais por Mês")
-        st.line_chart(saida_df.set_index("Mês")["Total Gastos"])
 
-        # Barras por categoria
-        st.subheader("Gastos por Categoria")
-        st.bar_chart(saida_df.set_index("Mês").drop(columns=["Total Gastos"]))
+        st.subheader("📆 Gastos Totais por Mês")
+        fig_gastos = px.line(saida_df, x="Mês", y="Total Gastos", markers=True, text="Total Gastos")
+        fig_gastos.update_traces(textposition="top center")
+        st.plotly_chart(fig_gastos, use_container_width=True)
 
-        # Pizza de distribuição
-        st.subheader("Distribuição Média de Gastos")
-        media_gastos = saida_df.drop(columns=["Mês", "Total Gastos"]).mean()
+        st.subheader("📋 Gastos por Categoria")
+        categorias = saida_df.drop(columns=["Mês", "Total Gastos"])
+        fig_cat = px.bar(saida_df, x="Mês", y=categorias.columns, barmode="group", text_auto=True)
+        fig_cat.update_traces(textposition="outside")
+        st.plotly_chart(fig_cat, use_container_width=True)
+
+        st.subheader("📊 Distribuição Média de Gastos")
+        media_gastos = categorias.mean()
         fig2, ax2 = plt.subplots()
         ax2.pie(media_gastos, labels=media_gastos.index, autopct='%1.1f%%', startangle=90)
+        ax2.axis('equal')
         st.pyplot(fig2)
 
-    # --- ABA INVESTIMENTO ---
+    # --- INVESTIMENTOS ---
     with tabs[2]:
-        st.header("Análise de Investimentos e Crescimento")
+        st.header("📈 Análise de Investimentos e Crescimento")
 
-        # Crescimento do saldo
-        st.subheader("Evolução do Saldo Total")
-        st.line_chart(investimento_df.set_index("Mês")["Saldo Total"])
+        st.subheader("📆 Evolução do Saldo Total")
+        fig_saldo = px.line(investimento_df, x="Mês", y="Saldo Total", markers=True, text="Saldo Total")
+        fig_saldo.update_traces(textposition="top center")
+        st.plotly_chart(fig_saldo, use_container_width=True)
 
-        # Comparativo investimento vs saldo
-        st.subheader("Investimento vs Saldo")
-        st.area_chart(investimento_df.set_index("Mês")[["Investimento", "Saldo Total"]])
+        st.subheader("📊 Investimento vs Saldo")
+        fig_area = px.area(investimento_df, x="Mês", y=["Investimento", "Saldo Total"])
+        st.plotly_chart(fig_area, use_container_width=True)
 
-        # Quanto gasta x quanto guarda
-        st.subheader("Gastos vs Investimentos")
+        st.subheader("📊 Gastos vs Investimentos")
         comparativo = pd.DataFrame({
-            "Gastos": saida_df["Total Gastos"],
-            "Investimentos": investimento_df["Investimento"]
-        }, index=saida_df["Mês"])
-        st.bar_chart(comparativo)
+            "Mês": saida_df["Mês"],
+            "Gastos": saida_df["Total Gastos"].values,
+            "Investimentos": investimento_df["Investimento"].values
+        })
+        fig_bar = px.bar(comparativo, x="Mês", y=["Gastos", "Investimentos"], barmode="group", text_auto=True)
+        fig_bar.update_traces(textposition="outside")
+        st.plotly_chart(fig_bar, use_container_width=True)
 
-        # Projeção simples: saldo futuro
-        st.subheader("Projeção de Saldo Futuro")
+        st.subheader("📈 % Gasto e Investimento sobre o Saldo")
+        comparativo["% Gasto"] = comparativo["Gastos"] / investimento_df["Saldo Total"].values * 100
+        comparativo["% Investimento"] = comparativo["Investimentos"] / investimento_df["Saldo Total"].values * 100
+
+        fig_pct = go.Figure()
+        fig_pct.add_trace(go.Scatter(x=comparativo["Mês"], y=comparativo["% Gasto"], mode='lines+markers+text',
+                                     name='% Gasto',
+                                     text=[f'{v:.1f}%' for v in comparativo["% Gasto"]],
+                                     textposition='top center'))
+        fig_pct.add_trace(go.Scatter(x=comparativo["Mês"], y=comparativo["% Investimento"], mode='lines+markers+text',
+                                     name='% Investimento',
+                                     text=[f'{v:.1f}%' for v in comparativo["% Investimento"]],
+                                     textposition='bottom center'))
+        fig_pct.update_layout(title="Percentual de Gasto e Investimento sobre o Saldo",
+                              yaxis_title='Porcentagem (%)', xaxis_title='Mês')
+        st.plotly_chart(fig_pct, use_container_width=True)
+
+        st.subheader("🔮 Projeção de Saldo Futuro (6 meses)")
         media_invest = investimento_df["Investimento"].mean()
         saldo_atual = investimento_df["Saldo Total"].iloc[-1]
         projecao = [saldo_atual + media_invest * i for i in range(1, 7)]
@@ -88,4 +119,6 @@ if arquivo is not None:
             "Mês": [f"+{i}m" for i in range(1, 7)],
             "Saldo Projetado": projecao
         })
-        st.line_chart(projecao_df.set_index("Mês"))
+        fig_proj = px.line(projecao_df, x="Mês", y="Saldo Projetado", markers=True, text="Saldo Projetado")
+        fig_proj.update_traces(textposition="top center")
+        st.plotly_chart(fig_proj, use_container_width=True)
