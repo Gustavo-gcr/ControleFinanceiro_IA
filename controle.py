@@ -12,7 +12,8 @@ st.title("📊 Dashboard Financeiro Pessoal")
 
 
 client = OpenAI(
-    api_key=st.secrets["GROQ_API_KEY"],
+   # api_key=st.secrets["GROQ_API_KEY"],
+    api_key=("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"),
     base_url="https://api.groq.com/openai/v1"
 )
 
@@ -32,7 +33,7 @@ if arquivo:
         saida_df = saida_df.tail(1)
         investimento_df = investimento_df.tail(1)
 
-    tabs = st.tabs(["💰 Entradas", "💸 Saídas", "📈 Investimentos", "Feedback Moderado ","🤖 Feedback Avançado"])
+    tabs = st.tabs(["💰 Entradas", "💸 Saídas", "📈 Investimentos", "📖 Feedback Matemático ","🤖 Feedback Personalizado","💻Consulte a IA"])
 
     # === TAB ENTRADAS ===
     with tabs[0]:
@@ -115,7 +116,9 @@ if arquivo:
         st.plotly_chart(fig_proj, use_container_width=True)
 
     with tabs[3]:
-        st.header("🔍 Análise e Recomendações Personalizadas")
+        st.header("🔍 Análise e Recomendações ")
+        st.subheader("Análise realizada com base nos últimos 3 meses de dados e em médias matemáticas.")
+
 
         if len(saida_df) >= 3 and len(investimento_df) >= 3:
             categorias_gastos = saida_df.drop(columns=["Mês", "Total Gastos"])
@@ -225,3 +228,44 @@ if arquivo:
 
         except Exception as e:
             st.error(f"❌ Erro ao se comunicar com a API da AI: {e}")
+    
+    with tabs[5]:
+        st.header("💻Consulte a IA")
+        st.markdown("📄 Gerando análise personalizada dos seus dados financeiros...")
+
+        ultimos_gastos = saida_df.tail(1).drop(columns=["Mês"]).to_dict(orient="records")[0]
+        ultimos_invest = investimento_df.tail(1).to_dict(orient="records")[0]
+
+        dados_texto = f"""
+        Últimos gastos: {ultimos_gastos}
+        Últimos investimentos: {ultimos_invest}
+        """
+
+        st.markdown("💬 Pergunte algo específico sobre seus dados financeiros:")
+
+        pergunta = st.text_area("Escreva sua pergunta para a IA:", placeholder="Ex: Eu invisto muito em renda fixa? Devo mudar isso?")
+        if st.button("Enviar pergunta"):
+            with st.spinner("Consultando a IA..."):
+                prompt = f"""
+                Você é um assistente financeiro pessoal. Com base nos dados abaixo, responda à pergunta do usuário de forma clara e útil.
+
+                {dados_texto}
+
+                Pergunta: {pergunta}
+                """
+
+                try:
+                    resposta = client.chat.completions.create(
+                        model="llama3-70b-8192",
+                        messages=[
+                            {"role": "system", "content": "Você é um assistente financeiro especializado em finanças pessoais."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=0.7,
+                        max_tokens=700
+                    )
+                    st.success("✅ Resposta da IA:")
+                    st.markdown(resposta.choices[0].message.content)
+
+                except Exception as e:
+                    st.error(f"❌ Erro ao consultar a IA: {str(e)}")
