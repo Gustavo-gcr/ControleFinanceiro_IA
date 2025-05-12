@@ -12,8 +12,8 @@ st.title("📊 Dashboard Financeiro Pessoal")
 
 
 client = OpenAI(
-   # api_key=st.secrets["GROQ_API_KEY"],
-    api_key=("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"),
+    api_key=st.secrets["GROQ_API_KEY"],
+    #api_key=("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"),
     base_url="https://api.groq.com/openai/v1"
 )
 
