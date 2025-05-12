@@ -63,7 +63,7 @@ Para rodar este projeto, é necessário ter o Python 3.7 ou superior e instalar 
 ## Como Rodar o Projeto 🚀
 
 ### 1. Clone o Repositório
-### 2. Entre no link e coloque sua planilha :
+### 2. Entre no link e coloque sua planilha : https://dashboardfinanceiropersonalizado.streamlit.app/
 
 ## Autor
 - [Gustavo Coelho](https://github.com/Gustavo-gcr)
