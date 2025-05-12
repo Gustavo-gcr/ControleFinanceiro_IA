@@ -1,6 +1,8 @@
 # 📊 Dashboard Financeiro Pessoal 💸
 
-Este projeto é um **Dashboard Financeiro Pessoal** desenvolvido em Python, utilizando as bibliotecas **Streamlit**, **Pandas**, **Plotly**, **Matplotlib**, entre outras. O objetivo do projeto é fornecer uma plataforma interativa para que os usuários possam analisar e planejar suas finanças pessoais, monitorando entradas, saídas e investimentos ao longo do tempo. Além disso, o sistema oferece insights personalizados para ajudar o usuário a melhorar a saúde financeira. 🚀
+Este projeto é um Dashboard Financeiro Pessoal Inteligente, desenvolvido em Python, utilizando as bibliotecas Streamlit, Pandas, Plotly, Matplotlib, entre outras — agora também integrado com Inteligência Artificial (IA) para fornecer recomendações personalizadas e previsões automáticas. O objetivo é oferecer uma plataforma interativa e inteligente para que os usuários possam analisar, planejar e melhorar suas finanças pessoais, monitorando entradas, saídas e investimentos ao longo do tempo. 🚀
+
+A IA integrada analisa padrões de comportamento financeiro, gera previsões de saldo futuro, envia alertas de risco e fornece feedbacks personalizados com base no seu histórico, ajudando você a tomar decisões mais conscientes e estratégicas.
 
 ## Funcionalidades ✨
 
@@ -26,18 +28,18 @@ A funcionalidade de **Análise de Investimentos** permite ao usuário monitorar 
 - **Comparativo de Gastos vs Investimentos 📊**: O sistema exibe gráficos de barras comparando os gastos totais com o saldo de investimentos, permitindo ao usuário visualizar seu progresso financeiro.
 
 ### 4. **Previsão de Saldo 🔮**
-A funcionalidade de **Previsão de Saldo** é uma das mais poderosas do sistema, pois oferece ao usuário uma projeção de seu saldo financeiro futuro. Utilizando as informações históricas de entradas, saídas e investimentos, o sistema calcula uma estimativa do saldo futuro, considerando diferentes cenários de crescimento e gastos.
+A funcionalidade de Previsão de Saldo agora utiliza modelos de IA treinados com base nos seus dados financeiros. O sistema reconhece padrões históricos de entrada, saída e investimentos e gera uma previsão precisa para o saldo dos próximos meses.
 
-- **Cenários Personalizados ⚙️**: O usuário pode escolher entre diferentes cenários (por exemplo, com aumento de despesas, crescimento dos investimentos, ou redução de gastos) para ver como essas mudanças podem impactar seu saldo.
-- **Projeção Mensal 📅**: A plataforma gera uma previsão do saldo para os próximos meses, ajudando o usuário a se planejar melhor.
-- **Avisos de Risco ⚠️**: Se a previsão indicar que o saldo pode ficar negativo em algum momento futuro, o sistema envia um alerta, dando ao usuário a oportunidade de ajustar suas finanças antes que isso aconteça.
+- Cenários Inteligentes ⚙️: A IA ajusta automaticamente as projeções com base em tendências percebidas nos seus hábitos financeiros.
+- Projeção Mensal com Aprendizado Contínuo 📅: Quanto mais você usa, mais o sistema aprende e melhora as estimativas.
+- Avisos de Risco Gerados por IA ⚠️: Alertas automáticos são gerados se o sistema prever que seu saldo pode se tornar negativo.
 
 ### 5. **Feedback Personalizado 📝**
-A funcionalidade de **Feedback Personalizado** é um dos maiores diferenciais deste projeto, pois ela oferece recomendações detalhadas e específicas para melhorar a saúde financeira do usuário com base nos seus hábitos de consumo e investimento.
+- Essa é uma das grandes inovações do projeto: um assistente inteligente que analisa seus dados e fornece conselhos específicos.
+- Dicas Inteligentes de Economia 💡: A IA identifica padrões de gastos excessivos e propõe sugestões reais para reduzir custos.
+- Sugestões de Investimento 📊: Com base no seu perfil e comportamento, o sistema propõe melhorias na forma como você investe.
 
-- **Dicas de Economia 💡**: O sistema analisa os padrões de gastos do usuário e sugere áreas onde ele pode economizar, como reduzir despesas com lazer ou alimentação, por exemplo.
-- **Recomendações de Investimentos 📊**: O sistema sugere alternativas de investimentos baseadas no perfil financeiro do usuário, ajudando a aumentar o retorno sobre o patrimônio.
-- **Alertas para Melhora de Saldo 🚨**: Caso o saldo de investimentos esteja abaixo de um valor ideal, ou se os gastos estiverem muito altos, o sistema envia alertas para que o usuário tome ações corretivas.
+Alertas Preditivos 🚨: O sistema detecta desvios financeiros fora do padrão e avisa com antecedência.
 
 ### 6. **Visualização Interativa 🔍**
 O projeto utiliza gráficos dinâmicos e interativos para melhorar a experiência do usuário, permitindo que ele interaja com os dados e faça uma análise mais profunda das suas finanças.
@@ -52,6 +54,7 @@ O projeto utiliza gráficos dinâmicos e interativos para melhorar a experiênci
 - **Matplotlib** e **Seaborn**: Para visualizações gráficas, especialmente para gráficos estáticos e análise exploratória.
 - **Plotly**: Para gráficos dinâmicos e interativos.
 - **Openpyxl**: Para leitura e escrita de arquivos Excel com dados financeiros.
+- **OpenAI API / Groq API (IA)**: Geração de feedbacks inteligentes e análise automatizada dos dados financeiros.
 
 ## Requisitos 🔧
 
