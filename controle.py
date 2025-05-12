@@ -114,7 +114,7 @@ if arquivo:
         fig_proj.update_traces(textposition="top center")
         st.plotly_chart(fig_proj, use_container_width=True)
 
-with tabs[3]:
+    with tabs[3]:
         st.header("🔍 Análise e Recomendações Personalizadas")
 
         if len(saida_df) >= 3 and len(investimento_df) >= 3:
@@ -172,56 +172,56 @@ with tabs[3]:
         else:
             st.warning("⚠️ É necessário pelo menos 3 meses de dados para gerar análises inteligentes.")
             
-with tabs[4]:
-    st.header("🤖 Feedback com IA")
-    st.markdown("📄 Gerando análise personalizada dos seus dados financeiros...")
+    with tabs[4]:
+        st.header("🤖 Feedback com IA")
+        st.markdown("📄 Gerando análise personalizada dos seus dados financeiros...")
 
-    ultimos_gastos = saida_df.tail(1).drop(columns=["Mês"]).to_dict(orient="records")[0]
-    ultimos_invest = investimento_df.tail(1).to_dict(orient="records")[0]
+        ultimos_gastos = saida_df.tail(1).drop(columns=["Mês"]).to_dict(orient="records")[0]
+        ultimos_invest = investimento_df.tail(1).to_dict(orient="records")[0]
 
-    prompt = f"""
-    Você é um assistente financeiro pessoal. Dado os dados abaixo, forneça conselhos personalizados e diretos.
+        prompt = f"""
+        Você é um assistente financeiro pessoal. Dado os dados abaixo, forneça conselhos personalizados e diretos.
 
-    Últimos gastos:
-    {ultimos_gastos}
+        Últimos gastos:
+        {ultimos_gastos}
 
-    Últimos investimentos:
-    {ultimos_invest}
+        Últimos investimentos:
+        {ultimos_invest}
 
-    Dê sugestões específicas de economia e investimento, apontando onde a pessoa pode melhorar.
-    """
+        Dê sugestões específicas de economia e investimento, apontando onde a pessoa pode melhorar.
+        """
 
-    try:
-        response = client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=[
-                {"role": "system", "content": "Você é um especialista em finanças pessoais."},
-                {"role": "user",   "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=700
-        )
-        resposta_raw = response.choices[0].message.content
+        try:
+            response = client.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[
+                    {"role": "system", "content": "Você é um especialista em finanças pessoais."},
+                    {"role": "user",   "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=700
+            )
+            resposta_raw = response.choices[0].message.content
 
 
-        resposta_formatada = (
-            resposta_raw
-            .replace("Análise dos Gastos", "🔍 **Análise dos Gastos**")
-            .replace("Análise dos Investimentos", "📈 **Análise dos Investimentos**")
-            .replace("Conclusão e Sugestões", "✅ **Conclusão e Sugestões**")
-            .replace("Sugiero", "💡 Sugiro")  
-            .replace("Você", "👉 Você")
-            .replace("Reduzir", "🔻 Reduzir")
-            .replace("Aumentar", "🔺 Aumentar")
-            .replace("Explorar", "🔍 Explorar")
-            .replace("Resumo", "📝 Resumo")
-            .replace("Em primeiro lugar", "📌 Em primeiro lugar")
-            .replace("Em seguida", "📎 Em seguida")
-            .replace("\n", "\n\n")  
-        )
+            resposta_formatada = (
+                resposta_raw
+                .replace("Análise dos Gastos", "🔍 **Análise dos Gastos**")
+                .replace("Análise dos Investimentos", "📈 **Análise dos Investimentos**")
+                .replace("Conclusão e Sugestões", "✅ **Conclusão e Sugestões**")
+                .replace("Sugiero", "💡 Sugiro")  
+                .replace("Você", "👉 Você")
+                .replace("Reduzir", "🔻 Reduzir")
+                .replace("Aumentar", "🔺 Aumentar")
+                .replace("Explorar", "🔍 Explorar")
+                .replace("Resumo", "📝 Resumo")
+                .replace("Em primeiro lugar", "📌 Em primeiro lugar")
+                .replace("Em seguida", "📎 Em seguida")
+                .replace("\n", "\n\n")  
+            )
 
-        st.markdown("### 💬 Recomendações da IA")
-        st.markdown(f"<div style='font-size: 17px; line-height: 1.6'>{resposta_formatada}</div>", unsafe_allow_html=True)
+            st.markdown("### 💬 Recomendações da IA")
+            st.markdown(f"<div style='font-size: 17px; line-height: 1.6'>{resposta_formatada}</div>", unsafe_allow_html=True)
 
-    except Exception as e:
-        st.error(f"❌ Erro ao se comunicar com a API da AI: {e}")
+        except Exception as e:
+            st.error(f"❌ Erro ao se comunicar com a API da AI: {e}")
