@@ -13,7 +13,6 @@ st.title("📊 Dashboard Financeiro Pessoal")
 
 client = OpenAI(
     api_key=st.secrets["GROQ_API_KEY"],
-   
     base_url="https://api.groq.com/openai/v1"
 )
 
@@ -26,7 +25,6 @@ if arquivo:
     saida_df = pd.read_excel(arquivo, sheet_name="saida")
     investimento_df = pd.read_excel(arquivo, sheet_name="investimento")
 
-    # Escolha vista
     opcao = st.radio("🔎 Visualizar:", ["Histórico completo", "Mês atual"])
     if opcao == "Mês atual":
         entrada_df = entrada_df.tail(1)
@@ -114,7 +112,7 @@ if arquivo:
         fig_proj = px.line(projecao_df, x="Mês", y="Saldo Projetado", markers=True, text="Texto")
         fig_proj.update_traces(textposition="top center")
         st.plotly_chart(fig_proj, use_container_width=True)
-
+# === TAB ANALISE DE DADOS ===
     with tabs[3]:
         st.header("🔍 Análise e Recomendações ")
         st.subheader("Análise realizada com base nos últimos 3 meses de dados e em médias matemáticas.")
@@ -174,7 +172,7 @@ if arquivo:
                 st.success("📈 Ótimo trabalho! Seus investimentos estão consistentes ou acima da média.")
         else:
             st.warning("⚠️ É necessário pelo menos 3 meses de dados para gerar análises inteligentes.")
-            
+     # === TAB FEEDBACK IA ===       
     with tabs[4]:
         st.header("🤖 Feedback com IA")
         st.markdown("📄 Gerando análise personalizada dos seus dados financeiros...")
@@ -228,7 +226,7 @@ if arquivo:
 
         except Exception as e:
             st.error(f"❌ Erro ao se comunicar com a API da AI: {e}")
-    
+    # === TAB CONSULTA IA ===
     with tabs[5]:
         st.header("💻Consulte a IA")
         st.markdown("📄 Gerando análise personalizada dos seus dados financeiros...")
