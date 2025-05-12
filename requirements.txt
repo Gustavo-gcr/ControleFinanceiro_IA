@@ -1,5 +1,5 @@
 streamlit>=1.32
 pandas>=2.2
 matplotlib>=3.8
-seaborn>=0.12.2  # Compatível com Python 3.12
+seaborn>=0.12.2
 plotly>=5.18
