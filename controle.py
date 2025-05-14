@@ -14,7 +14,7 @@ st.set_page_config(page_title="Dashboard Financeiro", layout="wide")
 st.title("📊 Dashboard Financeiro Pessoal")
 
 # ==== AUTENTICAÇÃO FIREBASE REST ====
-FIREBASE_WEB_API_KEY = st.secrets["firebase"]["apiKey"]
+FIREBASE_WEB_API_KEY = st.secrets["firebase"]["private_key_id"]
 FIREBASE_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts"
 
 def login_firebase(email, password):
