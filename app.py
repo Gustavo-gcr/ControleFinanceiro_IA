@@ -30,6 +30,8 @@ if choice == "Cadastro":
     if st.button("Criar conta"):
         try:
             user = auth.create_user_with_email_and_password(email, password)
+            st.session_state.user = user
+            st.session_state.uid = user["localId"]  
             st.success("Conta criada com sucesso!")
         except Exception as e:
             st.error(f"Erro: {e}")
@@ -37,7 +39,8 @@ elif choice == "Login":
     if st.button("Entrar"):
         try:
             user = auth.sign_in_with_email_and_password(email, password)
-            st.session_state.user = user  # guarda o login
+            st.session_state.user = user
+            st.session_state.uid = user["localId"] 
             st.success("Logado com sucesso!")
         except Exception as e:
             st.error("Login inválido")
