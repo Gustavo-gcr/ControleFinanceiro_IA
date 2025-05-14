@@ -6,39 +6,44 @@ import plotly.graph_objects as go
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
-import pyrebase
 from openai import OpenAI
+import requests
 
 # === CONFIGURAÇÕES GERAIS ===
 st.set_page_config(page_title="Dashboard Financeiro", layout="wide")
 st.title("📊 Dashboard Financeiro Pessoal")
 
-# ==== CONFIGURAÇÃO FIREBASE AUTH ====
-firebaseConfig = {
-    "apiKey": st.secrets["firebase"]["apiKey"],
-    "authDomain": st.secrets["firebase"]["authDomain"],
-    "projectId": st.secrets["firebase"]["project_id"],
-    "storageBucket": st.secrets["firebase"]["storageBucket"],
-    "messagingSenderId": st.secrets["firebase"]["messagingSenderId"],
-    "appId": st.secrets["firebase"]["appId"],
-    "measurementId": st.secrets["firebase"]["measurementId"],
-    "databaseURL": ""
-}
-firebase = pyrebase.initialize_app(firebaseConfig)
-auth = firebase.auth()
+# ==== AUTENTICAÇÃO FIREBASE REST ====
+FIREBASE_WEB_API_KEY = st.secrets["firebase"]["apiKey"]
+FIREBASE_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts"
+
+def login_firebase(email, password):
+    payload = {"email": email, "password": password, "returnSecureToken": True}
+    response = requests.post(f"{FIREBASE_AUTH_URL}:signInWithPassword?key={FIREBASE_WEB_API_KEY}", json=payload)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(response.json()["error"]["message"])
+
+def cadastrar_firebase(email, password):
+    payload = {"email": email, "password": password, "returnSecureToken": True}
+    response = requests.post(f"{FIREBASE_AUTH_URL}:signUp?key={FIREBASE_WEB_API_KEY}", json=payload)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(response.json()["error"]["message"])
 
 # ==== LOGIN / CADASTRO ====
 if "user" not in st.session_state:
     st.subheader("🔐 Login ou Cadastro")
     choice = st.selectbox("Escolha", ["Login", "Cadastro"])
-
     email = st.text_input("Email")
     password = st.text_input("Senha", type="password")
 
     if choice == "Cadastro":
         if st.button("Criar conta"):
             try:
-                user = auth.create_user_with_email_and_password(email, password)
+                user = cadastrar_firebase(email, password)
                 st.session_state.user = user
                 st.session_state.uid = user["localId"]
                 st.success("Conta criada com sucesso!")
@@ -47,7 +52,7 @@ if "user" not in st.session_state:
     elif choice == "Login":
         if st.button("Entrar"):
             try:
-                user = auth.sign_in_with_email_and_password(email, password)
+                user = login_firebase(email, password)
                 st.session_state.user = user
                 st.session_state.uid = user["localId"]
                 st.success("Logado com sucesso!")
@@ -123,6 +128,7 @@ if "user" in st.session_state:
         investimento_df = investimento_df.tail(1)
 
     tabs = st.tabs(["💰 Entradas", "💸 Saídas", "📈 Investimentos", "📖 Feedback Matemático", "🤖 Feedback Personalizado", "💻 Consulte a IA"])
+
 # === ENTRADAS ===
 with tabs[0]:
     st.header("💰 Análise de Entradas")
